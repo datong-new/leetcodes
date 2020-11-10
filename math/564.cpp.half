@@ -1,0 +1,68 @@
+//https://leetcode-cn.com/problems/find-the-closest-palindrome/
+//
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<string>
+
+using namespace std;
+
+void add_nums(vector<string> &nums, string left_part) {
+	string right_part = left_part;
+        reverse(right_part.rbegin(), right_part.rend());
+        nums.push_back(left_part + right_part);
+
+	if (left_part.length()==1) {
+		nums.push_back(left_part);
+		return;
+	}
+
+        right_part = left_part.substr(0, left_part.length()-1);
+        reverse(right_part.rbegin(), right_part.rend());
+        nums.push_back(left_part.substr(0, left_part.length()-1) + right_part);
+        nums.push_back(left_part + right_part);
+}
+
+string nearestPalindromic(string n) {
+	int len = n.length();
+
+	vector<string> nums;
+	if (len==2)
+		nums.push_back("9");
+
+	string left_part = n.substr(0, (len+1)/2);
+	cout<<"left_part:"<<left_part<<endl;
+	add_nums(nums, left_part);
+	add_nums(nums, to_string(stol(left_part)+1));
+	add_nums(nums, to_string(stol(left_part)-1));
+
+	left_part = n.substr(0, len/2+1);
+	cout<<"left_part:"<<left_part<<endl;
+	add_nums(nums, left_part);
+	add_nums(nums, to_string(stol(left_part)+1));
+	add_nums(nums, to_string(stol(left_part)-1));
+
+	long num = stol(n);
+	long min=abs(stol(nums[0])-num);
+	string min_s = nums[0];
+	for (int i=1; i<nums.size(); i++) {
+		cout<<i<<"\t"<<nums[i]<<endl;
+		long minus = abs(stol(nums[i])-num);
+		if (minus==0) continue;
+
+		if (minus<min || (minus==min && stol(nums[i])<stol(min_s))) {
+			min = minus;
+			min_s = nums[i];
+		}
+	}
+
+	return to_string(stol(min_s));
+
+}
+
+int main() {
+	string s = "2147483647";
+	s = nearestPalindromic(s);
+	cout<<s;
+
+}
